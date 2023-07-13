@@ -7,3 +7,6 @@ Also using chatGPT I created a json file of questions and answers related to Azu
 ```
 python -m http.server
 ```
+
+## [Play with the APP](https://azurebootcampstaticweb.z13.web.core.windows.net/index.html)
+
