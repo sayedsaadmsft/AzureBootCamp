@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quizzes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: blue;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            overflow-y: auto;  /* Add scrollbar */
+        }
+        .content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .btn {
+            background-color: darkblue;
+            color: white;
+            border: none;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            align-items: center;
+        }
+        a {
+            color: white;
+            text-decoration: none;
+        }
+        #results {
+            display: none;
+            font-size: 2em;
+            font-weight: bold;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <div class="header">
+        <img src="azure-logo.png" alt="Azure Logo" width="100">
+        <a href="index.html">Back to Home</a>
+    </div>
+    <div class="content">
+        <h1>Quizzes</h1>
+        <div id="quiz"></div>
+        <button id="submit" class="btn">Submit</button>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        var questions = [];
+        var answers = [];
+        var userAnswers = [];
+
+        function loadQuestions() {
+            $.getJSON('qa.json', function(data) {
+                questions = data.slice(0, 10); // Take first 10 questions
+                answers = questions.map(q => q.Answer);
+                showQuestions();
+            });
+        }
+
+        function showQuestions() {
+            questions.forEach((q, i) => {
+                var otherAnswers = answers.filter(a => a !== q.Answer);
+                otherAnswers = shuffle(otherAnswers).slice(0, 2);
+                var allAnswers = shuffle([...otherAnswers, q.Answer]);
+                var questionHTML = `<h2>${i + 1}. ${q.Question}</h2>`;
+                allAnswers.forEach(a => {
+                    questionHTML += `<input type="radio" name="question${i}" value="${a}">${a}<br>`;
+                });
+                $("#quiz").append(questionHTML);
+            });
+        }
+
+        function shuffle(array) {
+            var currentIndex = array.length, temporaryValue, randomIndex;
+            while (0 !== currentIndex) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex -= 1;
+                temporaryValue = array[currentIndex];
+                array[currentIndex] = array[randomIndex];
+                array[randomIndex] = temporaryValue;
+            }
+            return array;
+        }
+
+        $("#submit").click(function() {
+            var score = 0;
+            questions.forEach((q, i) => {
+                var userAnswer = $(`input[name=question${i}]:checked`).val();
+                if (userAnswer === q.Answer) {
+                    score++;
+                }
+            });
+            $("#results").html(`You scored ${score} out of ${questions.length}`);
+            $("#quiz, #submit").hide();  // Hide questions and submit button
+            $("#results").show();  // Show results
+        });
+
+        $(document).ready(function() {
+            loadQuestions();
+        });
+    </script>
+</body>
+</html>

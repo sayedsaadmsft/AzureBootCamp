@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Flashcards</title>
+    <style>
+          body {
+            background-color: blue;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+    
+        a {
+            color: white;
+            text-decoration: none;
+        }
+        .flashcard {
+            background-color: darkblue;
+            color: white;
+            padding: 20px;
+            margin: 10px;
+            cursor: pointer;
+            width: 90%;
+            text-align: center;
+            min-height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn {
+            background-color: darkblue;
+            color: white;
+            border: none;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <div class="header">
+        <img src="https://th.bing.com/th?id=OIP.2MdiBQd61FfRR-l393B7DAHaER&w=329&h=189&c=8&rs=1&qlt=90&o=6&dpr=1.1&pid=3.1&rm=2" alt="Azure Logo" width="100">
+        <a href="index.html">Back to Home</a>
+    </div>
+    <h1>Flashcards</h1>
+    <div id="flashcard" class="flashcard"></div>
+    <div>
+        <button id="prev" class="btn">Previous</button>
+        <button id="next" class="btn">Next</button>
+    </div>
+    <script>
+        var currentCard = 0;
+        var flashcards = [];
+
+        function loadFlashcards() {
+            $.getJSON('qa.json', function (data) {
+                flashcards = data;
+                console.log(flashcards);
+                showFlashcard();
+            });
+        }
+
+        function showFlashcard() {
+            $("#flashcard").html(flashcards[currentCard].Question);
+            console.log(flashcards[currentCard].Question);
+            console.log(flashcards[currentCard].Answer);
+        }
+
+        function flipCard() {
+            var text = $("#flashcard").html() === flashcards[currentCard].Question ? flashcards[currentCard].Answer : flashcards[currentCard].Question;
+            $("#flashcard").html(text);
+        }
+
+        $("#flashcard").click(function () {
+            flipCard();
+        });
+
+        $("#prev").click(function () {
+            if (currentCard > 0) {
+                currentCard--;
+                showFlashcard();
+            }
+        });
+
+        $("#next").click(function () {
+            if (currentCard < flashcards.length - 1) {
+                currentCard++;
+                showFlashcard();
+            }
+        });
+
+        $(document).ready(function () {
+            loadFlashcards();
+        });
+    </script>
+</body>
+
+</html>
